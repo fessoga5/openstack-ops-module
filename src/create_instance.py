@@ -27,21 +27,24 @@ def get_nova_credentials_v2():
     d = get_config_yaml()
     return d
 
-try:
-    instance_name = "test"
-    get_cnf = get_config_yaml(name_config="csserver");
-    credentials = get_nova_credentials_v2()
-    nova_client = Client(**credentials)
+def create_instance(hostname= "test"):
+    try:
+        get_cnf = get_config_yaml(name_config="csserver");
+        credentials = get_nova_credentials_v2()
+        nova_client = Client(**credentials)
 
-    image = nova_client.images.find(name=get_cnf["image_name"])
-    flavor = nova_client.flavors.find(name=get_cnf["image_type"])
-    net = nova_client.networks.find(label=get_cnf["network"])
-    nics = [{'net-id': net.id}]
-    instance = nova_client.servers.create(name=instance_name, image=image,
-                                      flavor=flavor, key_name=None, nics=nics)
-    print("Sleeping for 5s after create command")
-    time.sleep(5)
-    #print("List of VMs")
-    #print(nova_client.servers.list())
-finally:
-    print("Execution Completed")
+        image = nova_client.images.find(name=get_cnf["image_name"])
+        flavor = nova_client.flavors.find(name=get_cnf["image_type"])
+        net = nova_client.networks.find(label=get_cnf["network"])
+        nics = [{'net-id': net.id}]
+        instance = nova_client.servers.create(name=hostname, image=image,
+                                          flavor=flavor, key_name=None, nics=nics)
+        print("Sleeping for 5s after create command")
+        time.sleep(5)
+        #print("List of VMs")
+        #print(nova_client.servers.list())
+    finally:
+        print("Execution Completed")
+
+if __name__== "__main__":
+    create_instance()
