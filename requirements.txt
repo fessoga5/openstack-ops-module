@@ -1,0 +1,8 @@
+pip install openstacksdk
+pip install appdirs
+pip install keystoneauth1
+pip install requestsexceptions
+pip install credentials 
+pip install python-openstackclient
+apt-get install python-dev
+pip install netifaces
