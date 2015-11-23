@@ -27,7 +27,7 @@ def get_nova_credentials_v2():
     d = get_config_yaml()
     return d
 
-def create_instance(hostname= "test"):
+def create(hostname= "test"):
     try:
         get_cnf = get_config_yaml(name_config="csserver");
         credentials = get_nova_credentials_v2()
@@ -47,4 +47,4 @@ def create_instance(hostname= "test"):
         print("Execution Completed")
 
 if __name__== "__main__":
-    create_instance()
+    create()
