@@ -3,7 +3,6 @@
 import os
 import time
 #from credentials import get_nova_credentials_v2
-from novaclient.client import Client
 
 def get_config_yaml( path_config=os.path.dirname(os.path.realpath(__file__)) + "/../config.d/config.yaml", name_config="openstack"):
     import yaml
@@ -27,7 +26,8 @@ def get_nova_credentials_v2():
     d = get_config_yaml()
     return d
 
-def create(hostname= "test"):
+def __createInstance(hostname):
+    from novaclient.client import Client
     try:
         get_cnf = get_config_yaml(name_config="csserver");
         credentials = get_nova_credentials_v2()
@@ -37,19 +37,43 @@ def create(hostname= "test"):
         flavor = nova_client.flavors.find(name=get_cnf["image_type"])
         net = nova_client.networks.find(label=get_cnf["network"])
         nics = [{'net-id': net.id}]
-        instance = nova_client.servers.create(name=hostname, image=image,
-                                          flavor=flavor, key_name=None, nics=nics)
+        instance = nova_client.servers.create(name=hostname, image=image, flavor=flavor, key_name=None, nics=nics)
+
         #nova_client.floating_ips.list()
-        floating_ip = nova.floating_ips.create()
-        instance = nova.servers.find(name=hostname)
-        instance.add_floating_ip(floating_ip)
+        #floating_ip = nova_client.floating_ips.create()
+        instance = nova_client.servers.find(name=hostname)
+        #instance.add_floating_ip(floating_ip)
 
         print("Sleeping for 5s after create command")
         time.sleep(5)
         #print("List of VMs")
         #print(nova_client.servers.list())
+    except:
+        return False
     finally:
         print("Execution Completed")
+        return True
+
+def __associateFloatingIP(hostname):
+    from novaclient.client import Client
+    try:
+        get_cnf = get_config_yaml(name_config="csserver");
+        credentials = get_nova_credentials_v2()
+        nova_client = Client(**credentials)
+
+        #nova_client.floating_ips.list()
+        floating_ip = nova_client.floating_ips.create()
+        instance = nova_client.servers.find(name=hostname)
+        instance.add_floating_ip(floating_ip)
+
+    except:
+        return False
+    finally:
+        print("Floating ip associate")
+        return True
+
+def create(hostname="test"):
+    return __createInstance(hostname) and __associateFloatingIP(hostname)
 
 if __name__== "__main__":
     create()

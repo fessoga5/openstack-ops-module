@@ -4,7 +4,7 @@ import os
 import time
 #from credentials import get_nova_credentials_v2
 #from novaclient.client import Client
-from neutronclient.v2_0 import client
+from neutronclient.v2_0 import client 
 
 def get_config_yaml( path_config=os.path.dirname(os.path.realpath(__file__)) + "/../config.d/config.yaml", name_config="openstack"):
     import yaml
@@ -25,8 +25,10 @@ def get_config_yaml( path_config=os.path.dirname(os.path.realpath(__file__)) + "
     return dataMap
 
 def floatingipadd(hostname, ipaddress):
-    neutron = client.Client(**get_config_yaml())
+    #neutron = client.Client(**get_config_yaml())
+    neutron = client.Client(username= get_config_yaml()['username'], password= get_config_yaml()['password'],tenant_name= get_config_yaml()['tenant_name'], auth_url=get_config_yaml()['auth_url'])
     nets = neutron.list_networks()
+    AssociateFloatingIP.run('')
     print(nets)
 
 if __name__== "__main__":
