@@ -39,6 +39,11 @@ def create(hostname= "test"):
         nics = [{'net-id': net.id}]
         instance = nova_client.servers.create(name=hostname, image=image,
                                           flavor=flavor, key_name=None, nics=nics)
+        #nova_client.floating_ips.list()
+        floating_ip = nova.floating_ips.create()
+        instance = nova.servers.find(name=hostname)
+        instance.add_floating_ip(floating_ip)
+
         print("Sleeping for 5s after create command")
         time.sleep(5)
         #print("List of VMs")
