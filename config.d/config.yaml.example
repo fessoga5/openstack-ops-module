@@ -1,11 +1,16 @@
 #vim: sts=2 ts=2 sw=2 et ai
 openstack:
   'project_id': 'admin'
+  'tenant_name': 'admin'
   'username': 'admin'
   'api_key': '12345'
   'auth_url': 'http://controller:35357/v2.0'
   'version': '2'
+  'endpoint_url': 'http://controller:35357/v2.0'
+  'token': ''
 csserver:
-  'image_name': 'repos:5000/cs01'
+  'image_name': 'repos:5000/ubuntu15.10'
   'image_type': 'm1.small'
-  'network': 'privnet2'
+  'network': 'int_public'
+  'network_floating': 'ext_public'
+  'sec-groups': ['default', 'allow']
