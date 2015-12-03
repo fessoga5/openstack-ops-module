@@ -37,7 +37,7 @@ def __createInstance(hostname):
         flavor = nova_client.flavors.find(name=get_cnf["image_type"])
         net = nova_client.networks.find(label=get_cnf["network"])
         nics = [{'net-id': net.id}]
-        instance = nova_client.servers.create(name=hostname, image=image, flavor=flavor, key_name=None, nics=nics)
+        instance = nova_client.servers.create(name=hostname, image=image, flavor=flavor, key_name=None, nics=nics, security_groups=get_cnf['sec-groups'])
 
         #nova_client.floating_ips.list()
         #floating_ip = nova_client.floating_ips.create()
@@ -48,11 +48,10 @@ def __createInstance(hostname):
         time.sleep(5)
         #print("List of VMs")
         #print(nova_client.servers.list())
-    except:
-        return False
-    finally:
-        print("Execution Completed")
         return True
+    except Exception as e:
+        print(str(e))
+        return False
 
 def __associateFloatingIP(hostname):
     from novaclient.client import Client
@@ -61,16 +60,15 @@ def __associateFloatingIP(hostname):
         credentials = get_nova_credentials_v2()
         nova_client = Client(**credentials)
 
-        #nova_client.floating_ips.list()
-        floating_ip = nova_client.floating_ips.create()
+        #print(nova_client.floating_ips.list())
+        floating_ip = nova_client.floating_ips.create(get_cnf['network_floating'])
         instance = nova_client.servers.find(name=hostname)
         instance.add_floating_ip(floating_ip)
-
-    except:
-        return False
-    finally:
-        print("Floating ip associate")
         return True
+
+    except Exception as e:
+        print(str(e))
+        return False
 
 def create(hostname="test"):
     return __createInstance(hostname) and __associateFloatingIP(hostname)
